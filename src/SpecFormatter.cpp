@@ -139,6 +139,8 @@ namespace SpecFormatter {
 
     void writeHtml(QFile &file, QVector<Spec*> specs, QCommandLineParser &cmd) {
         file.open(QIODevice::WriteOnly);
+        
+        qDebug() << "Writing HTML File";
 
         QXmlStreamWriter xml(&file);
         //xml.setAutoFormatting(true); //Commented out as we don't need whitespace only text nodes everywhere
@@ -148,6 +150,7 @@ namespace SpecFormatter {
         xml.writeComment("This is auto-generated. Do not edit.");
 
         foreach(Spec* spec, specs) {
+            qDebug() << "  Writing spec to file";
             //Add spec title header
             xml.writeStartElement("h1"); //TODO: Make headers configurable
             xml.writeAttribute("id", "spec-" + spec->getId());
@@ -155,6 +158,7 @@ namespace SpecFormatter {
             xml.writeEndElement();
 
             //Add notes
+            qDebug() << "    Writing notes";
             QVector<QString> notes = spec->getNotes();
             if (notes.size() > 0) {
                 xml.writeTextElement("h2", "Notes"); //TODO: Make headers configurable
@@ -167,6 +171,7 @@ namespace SpecFormatter {
             }
 
             //Add table of contents
+            qDebug() << "    Writing TOC";
             xml.writeTextElement("h2", "Sections"); //TODO: Make headers configurable
             xml.writeStartElement("ul");
             foreach(Section* section, spec->getSections()) {
@@ -181,6 +186,7 @@ namespace SpecFormatter {
 
 
             //Add flags key
+            qDebug() << "    Adding flags";
             xml.writeTextElement("h2", "Flags"); //TODO: Make headers configurable
             xml.writeStartElement("ul");
             foreach(Flag* flag, spec->getFlags()) {
@@ -195,6 +201,7 @@ namespace SpecFormatter {
             xml.writeEndElement();
 
             //Add sections
+            qDebug() << "    Adding sections";
             foreach(Section* section, spec->getSections()) {
                 //Add section title header
                 xml.writeStartElement("h2"); //TODO: Make headers configurable
@@ -221,7 +228,7 @@ namespace SpecFormatter {
                 if (cmd.isSet("table-class")) {
                     xml.writeAttribute("class", cmd.value("table-class"));
                 }
-
+                
                 //Add the table headers
                 xml.writeStartElement("tr");
                 xml.writeTextElement("th", "Relative Offset (Hex)");
@@ -256,7 +263,7 @@ namespace SpecFormatter {
                     xml.writeStartElement("td");
                     for (int i = 0; i < entry->getFlags().length(); i++) {
                         QChar flagId = entry->getFlags()[i];
-                        Flag *flag;
+                        Flag *flag = nullptr;
 
                         //Find the flag
                         foreach(Flag *checkFlag, spec->getFlags()) {
@@ -264,10 +271,14 @@ namespace SpecFormatter {
                         }
 
                         //Add the flag image
-                        xml.writeStartElement("img");
-                        xml.writeAttribute("src", flag->getImage());
-                        xml.writeAttribute("title", flag->getInfo());
-                        xml.writeEndElement();
+                        if (flag != nullptr) {
+                            xml.writeStartElement("img");
+                            xml.writeAttribute("src", flag->getImage());
+                            xml.writeAttribute("title", flag->getInfo());
+                            xml.writeEndElement();
+                        } else {
+                            qDebug() << "    Element" << i << "in section" << section->getName() << "references non-existent flag";
+                        }
                     }
                     xml.writeEndElement();
 
