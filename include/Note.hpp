@@ -9,7 +9,7 @@ namespace SpecFormatter {
         protected:
             QString text;
             QVector<Note*> notes;
-        
+
         public:
             void setText(QString text);
             QString getText();
@@ -19,3 +19,4 @@ namespace SpecFormatter {
 }
 
 #endif
+

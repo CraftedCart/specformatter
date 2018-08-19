@@ -163,7 +163,7 @@ namespace SpecFormatter {
 
     void writeHtml(QFile &file, QVector<Spec*> specs, QCommandLineParser &cmd) {
         file.open(QIODevice::WriteOnly);
-        
+
         qDebug() << "Writing HTML File";
 
         QXmlStreamWriter xml(&file);
@@ -174,7 +174,7 @@ namespace SpecFormatter {
         xml.writeComment("This is auto-generated. Do not edit.");
 
         foreach(Spec* spec, specs) {
-            qDebug() << "  Writing spec to file";
+            qDebug() << "    Writing spec to file";
             //Add spec title header
             xml.writeStartElement("h1"); //TODO: Make headers configurable
             xml.writeAttribute("id", "spec-" + spec->getId());
@@ -182,13 +182,13 @@ namespace SpecFormatter {
             xml.writeEndElement();
 
             //Add notes
-            qDebug() << "    Writing notes";
+            qDebug() << "        Writing notes";
             QVector<Note*> notes = spec->getNotes();
             if (notes.size() > 0) {
                 xml.writeTextElement("h2", "Notes"); //TODO: Make headers configurable
 
                 xml.writeStartElement("ul");
-                
+
                 foreach(Note* note, notes) {
                     if (note->getText() != "") {
                         xml.writeTextElement("li", note->getText());
@@ -205,7 +205,7 @@ namespace SpecFormatter {
             }
 
             //Add table of contents
-            qDebug() << "    Writing TOC";
+            qDebug() << "        Writing TOC";
             xml.writeTextElement("h2", "Sections"); //TODO: Make headers configurable
             xml.writeStartElement("ul");
             foreach(Section* section, spec->getSections()) {
@@ -220,7 +220,7 @@ namespace SpecFormatter {
 
 
             //Add flags key
-            qDebug() << "    Adding flags";
+            qDebug() << "        Adding flags";
             xml.writeTextElement("h2", "Flags"); //TODO: Make headers configurable
             xml.writeStartElement("ul");
             foreach(Flag* flag, spec->getFlags()) {
@@ -235,7 +235,7 @@ namespace SpecFormatter {
             xml.writeEndElement();
 
             //Add sections
-            qDebug() << "    Adding sections";
+            qDebug() << "        Adding sections";
             foreach(Section* section, spec->getSections()) {
                 //Add section title header
                 xml.writeStartElement("h2"); //TODO: Make headers configurable
@@ -262,7 +262,7 @@ namespace SpecFormatter {
                 if (cmd.isSet("table-class")) {
                     xml.writeAttribute("class", cmd.value("table-class"));
                 }
-                
+
                 //Add the table headers
                 xml.writeStartElement("tr");
                 xml.writeTextElement("th", "Relative Offset (Hex)");
@@ -311,7 +311,7 @@ namespace SpecFormatter {
                             xml.writeAttribute("title", flag->getInfo());
                             xml.writeEndElement();
                         } else {
-                            qDebug() << "    Element" << i << "in section" << section->getName() << "references non-existent flag";
+                            qWarning() << "        Element" << i << "in section" << section->getName() << "references non-existent flag";
                         }
                     }
                     xml.writeEndElement();
