@@ -28,6 +28,7 @@ set(SOURCE_FILES
     ./src/Section.cpp
     ./src/Entry.cpp
     ./src/Flag.cpp
+    ./src/Note.cpp
     )
 
 set(HEADER_FILES
@@ -36,6 +37,7 @@ set(HEADER_FILES
     ./include/Section.hpp
     ./include/Entry.hpp
     ./include/Flag.hpp
+    ./include/Note.hpp
     )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})

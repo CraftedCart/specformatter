@@ -3,6 +3,7 @@
 namespace SpecFormatter {
 
     Spec::~Spec() {
+        qDeleteAll(notes);
         qDeleteAll(flags);
         qDeleteAll(sections);
     }
@@ -31,11 +32,11 @@ namespace SpecFormatter {
         return linkImage;
     }
 
-    void Spec::addNote(QString note) {
+    void Spec::addNote(Note *note) {
         notes.append(note);
     }
 
-    QVector<QString>& Spec::getNotes() {
+    QVector<Note*>& Spec::getNotes() {
         return notes;
     }
 
