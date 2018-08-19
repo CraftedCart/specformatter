@@ -95,9 +95,16 @@ namespace SpecFormatter {
                 qDebug() << "    Found flag id:" << flag->getId() << "info:" << flag->getInfo() + "image:" << flag->getImage();
             } else if (xml.name() == "note") {
                 //Found note
-                QString note = xml.readElementText();
+                Note *note = new Note();
+                note->setText(xml.readElementText());
                 spec->addNote(note);
-                qDebug() << "    Found note:" << note;
+                qDebug() << "    Found note:" << note->getText();
+            } else if (xml.name() == "note-list") {
+                //Found note list
+                Note *note = new Note();
+                spec->addNote(note);
+                qDebug() << "    Found note list";
+                parseNoteList(xml, note);
             } else if (xml.name() == "section") {
                 //Found section
                 Section *section = new Section();
@@ -110,6 +117,23 @@ namespace SpecFormatter {
 
                 qDebug() << "    Found section id:" << section->getId() << "name:" << section->getName();
                 parseSection(xml, section);
+            }
+        }
+    }
+    
+    void parseNoteList(QXmlStreamReader &xml, Note *note) {
+        while (!xml.atEnd()) {
+            xml.readNext();
+            if (xml.isEndElement() && xml.name() == "note-list") return;
+            if (!xml.isStartElement()) continue;
+            
+            if (xml.name() == "note") {
+                Note *newNote = new Note();
+                newNote->setText(xml.readElementText());
+                note->addNote(newNote);
+                qDebug() << "      Found note:" << newNote->getText();
+            } else if (xml.name() == "note-list") {
+                qDebug() << "      Nested note lists are not supported";
             }
         }
     }
@@ -159,13 +183,23 @@ namespace SpecFormatter {
 
             //Add notes
             qDebug() << "    Writing notes";
-            QVector<QString> notes = spec->getNotes();
+            QVector<Note*> notes = spec->getNotes();
             if (notes.size() > 0) {
                 xml.writeTextElement("h2", "Notes"); //TODO: Make headers configurable
 
                 xml.writeStartElement("ul");
-
-                foreach(QString note, notes) xml.writeTextElement("li", note);
+                
+                foreach(Note* note, notes) {
+                    if (note->getText() != "") {
+                        xml.writeTextElement("li", note->getText());
+                    } else {
+                        xml.writeStartElement("ul");
+                        foreach(Note* listNote, note->getNotes()) {
+                            xml.writeTextElement("li", listNote->getText());
+                        }
+                        xml.writeEndElement();
+                    }
+                }
 
                 xml.writeEndElement();
             }

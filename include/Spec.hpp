@@ -2,6 +2,7 @@
 #define SPECFORMATTER_SPEC_HPP
 
 #include "Section.hpp"
+#include "Note.hpp"
 #include <QString>
 #include <QVector>
 
@@ -11,7 +12,7 @@ namespace SpecFormatter {
             QString id;
             QString name;
             QString linkImage;
-            QVector<QString> notes;
+            QVector<Note*> notes;
             QVector<Flag*> flags;
             QVector<Section*> sections;
 
@@ -24,8 +25,8 @@ namespace SpecFormatter {
             QString getName();
             void setLinkImage(QString linkImage);
             QString getLinkImage();
-            void addNote(QString note);
-            QVector<QString>& getNotes();
+            void addNote(Note *note);
+            QVector<Note*>& getNotes();
             void addFlag(Flag *flag);
             QVector<Flag*>& getFlags();
             void addSection(Section *section);
