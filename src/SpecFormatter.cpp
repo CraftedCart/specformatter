@@ -120,20 +120,20 @@ namespace SpecFormatter {
             }
         }
     }
-    
+
     void parseNoteList(QXmlStreamReader &xml, Note *note) {
         while (!xml.atEnd()) {
             xml.readNext();
             if (xml.isEndElement() && xml.name() == "note-list") return;
             if (!xml.isStartElement()) continue;
-            
+
             if (xml.name() == "note") {
                 Note *newNote = new Note();
                 newNote->setText(xml.readElementText());
                 note->addNote(newNote);
-                qDebug() << "      Found note:" << newNote->getText();
+                qDebug() << "        Found note:" << newNote->getText();
             } else if (xml.name() == "note-list") {
-                qDebug() << "      Nested note lists are not supported";
+                qWarning() << "        Nested note lists are not supported";
             }
         }
     }
