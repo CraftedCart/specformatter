@@ -8,7 +8,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #Be really pedantic!
-add_definitions(-Wall -Wextra -pedantic)
+if(MSVC)
+    add_definitions(/W4)
+else()
+    add_definitions(-Wall -Wextra -pedantic)
+endif()
 
 #Automatically run moc, uic and rcc when needed
 set(CMAKE_AUTOMOC ON)
@@ -46,4 +50,3 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     )
-
